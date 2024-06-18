@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Http\Resources\User as UserResource;
+use Illuminate\Support\Facades\Validator;
 
 class UsersApiController extends Controller
 {
@@ -15,26 +16,38 @@ class UsersApiController extends Controller
         return UserResource::collection($users);
 
     }
-    public function store(){
-        request()->validate([
-            'name' => 'required',
-            'email' => 'required',
-            'password' => 'required',
+    public function store(Request $request){
+        $validator = Validator::make($request->all(),[
+            'name' => 'required|max:191',
+            'email' => 'required|max:191',
+            'password' => 'required|max:191',
         ]);
 
-        /* return User::create([
-            'name' => request('name'),
-            'email' => request('email'),
-            'password' => request('password'),
-        ]); */
+        if($validator->fails()){
+            return response()->json([
+                'status' => 422,
+                'errors' => $validator->messages(),
+            ], 422);
+        }else{
+            $user = User::create([
+                'name' => $request->input('name'),
+                'email' => $request->input('email'),
+                'password' => bcrypt($request->input('password')),
+            ]);
 
-        $user = new User;
-        $user->name = request('name');
-        $user->email = request('email');
-        $user->password = request('password');
-        $user->save();
+            if($user){
+                return response()->json([
+                    'status' => 200,
+                    'message' => 'User Added Successfully'
+                ], 200);
+            }else{
+                return response()->json([
+                    'status' => 500,
+                    'message' => 'Somthing Went Wrong'
+                ], 500);
+            }
+        }
 
-        return new UserResource($user);
     }
 
     public function showById($id){
@@ -42,7 +55,7 @@ class UsersApiController extends Controller
         if($users){
             return new UserResource($users);
         }else{
-            return response()->jsone(['Error' => 'Data Not Found!'], 404);
+            return response()->json(['Error' => 'Data Not Found!'], 404);
         }
     }
 
@@ -61,7 +74,7 @@ class UsersApiController extends Controller
 
             return new UserResource($user);
         }else{
-            return response()->jsone(['Error' => 'Data Not Found!'], 404);
+            return response()->json(['Error' => 'Data Not Found!'], 404);
         }
     }
     public function destroy($id){
@@ -70,7 +83,7 @@ class UsersApiController extends Controller
             $user->delete();
             return new UserResource($user);
         }else{
-            return response()->jsone(['Error' => 'Data Not Found!'], 404);
+            return response()->json(['Error' => 'Data Not Found!'], 404);
         }
     }
 }
