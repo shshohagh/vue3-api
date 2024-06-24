@@ -12,14 +12,26 @@ class UsersApiController extends Controller
     public function index(){
 
         $users =  User::all();
-        return UserResource::collection($users);
+        if($users->count() > 0){
+            return response()->json([
+                'status' => 200,
+                'users' =>$users,
+            ], 200);
+        }else{
+            return response()->json([
+                'status' => 404,
+                'message' => 'No Users Data Found',
+            ], 404);
+        }
+
+        //return UserResource::collection($users);
 
     }
     public function store(Request $request){
         $validator = Validator::make($request->all(),[
-            'name' => 'required|max:191',
-            'email' => 'required|max:191',
-            'password' => 'required|max:191',
+            'name' => 'required|string|max:191',
+            'email' => 'required|email|unique:users,email|max:191',
+            'password' => 'required|string|min:8|max:191',
         ]);
 
         if($validator->fails()){
@@ -52,37 +64,72 @@ class UsersApiController extends Controller
     public function showById($id){
         $users =  User::find($id);
         if($users){
-            return new UserResource($users);
+            return response()->json([
+                'status' => 200,
+                'user' =>$users,
+            ], 200);
+            //return new UserResource($users);
         }else{
-            return response()->json(['Error' => 'Data Not Found!'], 404);
+            return response()->json([
+                'status' => 404,
+                'message' => 'No User ID Found',
+            ], 404);
+            //return response()->json(['Error' => 'Data Not Found!'], 404);
         }
     }
 
-    public function update($id){
-        request()->validate([
-            'name' => 'required',
-            'email' => 'required',
+    public function update(Request $request, $id){
+        $validator = Validator::make($request->all(),[
+            'name' => 'required|max:191',
+            'email' => 'required|max:191',
         ]);
 
-        $user =  User::find($id);
-        if($user){
+        if($validator->fails()){
 
-            $user->name = request('name');
-            $user->email = request('email');
-            $user->save();
+            return response()->json([
+                'status' => 422,
+                'errors' => $validator->messages(),
+            ], 422);
 
-            return new UserResource($user);
         }else{
-            return response()->json(['Error' => 'Data Not Found!'], 404);
+
+            $user =  User::find($id);
+            if($user){
+
+                $user->name = request('name');
+                $user->email = request('email');
+                $user->update();
+
+                return response()->json([
+                    'status' => 200,
+                    'message' => 'User Updated Successfully'
+                ], 200);
+
+                //return new UserResource($user);
+            }else{
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'No User ID Found',
+                ], 404);
+                //return response()->json(['Error' => 'Data Not Found!'], 404);
+            }
         }
     }
     public function destroy($id){
         $user =  User::find($id);
         if($user){
             $user->delete();
-            return new UserResource($user);
+            return response()->json([
+                'status' => 200,
+                'message' => 'User Deleted Successfully'
+            ], 200);
+            //return new UserResource($user);
         }else{
-            return response()->json(['Error' => 'Data Not Found!'], 404);
+            return response()->json([
+                'status' => 404,
+                'message' => 'No User ID Found',
+            ], 404);
+            //return response()->json(['Error' => 'Data Not Found!'], 404);
         }
     }
 }

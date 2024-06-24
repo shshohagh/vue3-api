@@ -4,7 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use Illuminate\Http\Request;
-use App\Http\Resources\Product as ProductResource;
+use App\Http\Resources\ProductResource;
+use App\Http\Resources\ProductCollection;
 use Illuminate\Support\Facades\Validator;
 
 class ProductApiController extends Controller
@@ -12,7 +13,7 @@ class ProductApiController extends Controller
     public function index(){
 
         $products =  Product::all();
-        return ProductResource::collection($products);
+        return ProductCollection::collection($products);
 
     }
     public function store(Request $request){
@@ -90,9 +91,17 @@ class ProductApiController extends Controller
         $product =  Product::find($id);
         if($product){
             $product->delete();
-            return new ProductResource($product);
+            return response()->json([
+                'status' => 200,
+                'message' => 'Product Deleted Successfully'
+            ], 200);
+            //return new ProductResource($product);
         }else{
-            return response()->json(['Error' => 'Data Not Found!'], 404);
+            return response()->json([
+                'status' => 404,
+                'message' => 'No User ID Found',
+            ], 404);
+            //return response()->json(['Error' => 'Data Not Found!'], 404);
         }
     }
 }
