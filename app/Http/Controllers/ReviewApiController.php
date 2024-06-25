@@ -3,11 +3,14 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Product;
 use App\Models\Review;
 use Illuminate\Support\Facades\Validator;
+use App\Http\Resources\Product\ReviewRecource;
 
 class ReviewApiController extends Controller
 {
+
     public function store(Request $request){
         $validator = Validator::make($request->all(),[
             'product_id' => 'required|max:191',
@@ -43,4 +46,10 @@ class ReviewApiController extends Controller
         }
 
     }
+
+    public function showById(Product $product){
+        return ReviewRecource::collection($product->reviews);
+    }
+
+
 }

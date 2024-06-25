@@ -23,7 +23,7 @@ Route::get('/products/{id}', [ProductApiController::class, 'showById']);
 Route::put('/products/{id}', [ProductApiController::class, 'update']);
 Route::delete('/products/{id}', [ProductApiController::class, 'destroy']);
 /* reviews */
-Route::get('/products/reviews', [ReviewApiController::class, 'index']);
+//Route::get('/products/reviews', [ReviewApiController::class, 'index']);
 Route::post('/products/reviews', [ReviewApiController::class, 'store']);
 Route::get('/products/reviews/{id}', [ReviewApiController::class, 'showById']);
 Route::put('/products/reviews/{id}', [ReviewApiController::class, 'update']);
