@@ -1,2 +1,15 @@
 php artisan install:api
-https://www.youtube.com/watch?v=z3YPhYwcbBM&list=PLe30vg_FG4OT274vxiC_cXwQm2zqjf3Rh&index=11
+php artisan install:api --passport
+php artisan passport:client --personal
+
+{
+    "grant_type" : "password",
+    "client_id" : "2",
+    "client_secret" : "VwkJChXNvB7IZB7zemPYqZ8VLlDPIWT1WW9qLQO3",
+    "username": "shshohagh3@gmail.com",
+    "password" : "shshohagh3@gmail.com"
+}
+
+php artisan passport:keys
+
+https://www.youtube.com/watch?v=1VFTmqFFQ-Y&list=PLe30vg_FG4OT274vxiC_cXwQm2zqjf3Rh&index=14

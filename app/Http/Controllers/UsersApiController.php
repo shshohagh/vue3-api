@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Validator;
 
 class UsersApiController extends Controller
 {
+
     public function index(){
 
         $users =  User::all();

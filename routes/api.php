@@ -5,10 +5,24 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UsersApiController;
 use App\Http\Controllers\ProductApiController;
 use App\Http\Controllers\ReviewApiController;
+use App\Http\Controllers\ApiController;
 
-Route::get('/user', function (Request $request) {
+// Open Routes
+Route::post("register", [ApiController::class, "register"]);
+Route::post("login", [ApiController::class, "login"]);
+
+// Protected Routes
+Route::group([
+    "middleware" => ["auth:api"]
+], function(){
+
+    Route::get("profile", [ApiController::class, "profile"]);
+    Route::get("logout", [ApiController::class, "logout"]);
+});
+
+/* Route::get('/user', function (Request $request) {
     return $request->user();
-})->middleware('auth:sanctum');
+})->middleware('auth:api'); */
 
 /* users */
 Route::get('/users', [UsersApiController::class, 'index']);
